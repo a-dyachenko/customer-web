@@ -1,7 +1,10 @@
 customers-web
 ==============
 
-get customer-core first so the app is functional
+1) get customer-core first so the app is functional
+2) create MySql database by running https://github.com/a-dyachenko/customer-web/blob/master/src/main/resources/customer_schema_init.sql
+3) update https://github.com/a-dyachenko/customer-core/blob/master/src/main/resources/hibernate.cfg.xml with db user / password
+
 
 Template for a simple Vaadin application that only requires a Servlet 3.0 container to run.
 

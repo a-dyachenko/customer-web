@@ -1,0 +1,32 @@
+@import "mytheme.scss";
+@import "addons.scss";
+
+// This file prefixes all rules with the theme name to avoid causing conflicts with other themes.
+// The actual styles should be defined in mytheme.scss
+
+.mytheme {
+  @include addons;
+  @include mytheme;
+	.customer-table-filter-text {
+
+    	height: 27px;
+    	margin-bottom: 2px;
+    	width: 100px;
+	}
+	
+	.customers-comment-view {
+		padding: 10px !important;
+		
+	}
+	.customers-comment-layout { 
+		padding: 0 !important;
+	}
+	
+	.customers-table-layout {
+		padding: 0 !important;
+		width: 700px !important;
+	}
+	.customer-ui-label {
+		font-size: 20px;
+	}
+}

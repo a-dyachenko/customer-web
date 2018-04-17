@@ -68,6 +68,7 @@ public class CustomerTable extends VerticalLayout {
 
 			@Override
 			public void valueChange(ValueChangeEvent<String> event) {
+				@SuppressWarnings("unchecked")
 				ListDataProvider<CustomerDB> dataProvider = (ListDataProvider<CustomerDB>) customerTable
 						.getDataProvider();
 
@@ -82,6 +83,7 @@ public class CustomerTable extends VerticalLayout {
 
 			@Override
 			public void valueChange(ValueChangeEvent<String> event) {
+				@SuppressWarnings("unchecked")
 				ListDataProvider<CustomerDB> dataProvider = (ListDataProvider<CustomerDB>) customerTable
 						.getDataProvider();
 

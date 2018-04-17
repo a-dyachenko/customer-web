@@ -43,10 +43,10 @@ public class CustomersUI extends UI {
 			if (getWindows().size() == 0) {
 
 				Window popupWindow = new Window("Create Customer");
-				popupWindow.setContent(new NewCustomerForm(popupWindow, customerTable));
-				popupWindow.setWidth("400");
+				popupWindow.setContent(new CustomerForm(popupWindow, customerTable));
+				popupWindow.setWidth("700");
 				popupWindow.center();
-				popupWindow.setPositionY(150);
+				popupWindow.setPositionY(50);
 				popupWindow.setPositionX(250);
 				popupWindow.setResizable(false);
 				addWindow(popupWindow);

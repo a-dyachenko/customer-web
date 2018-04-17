@@ -96,6 +96,7 @@ public class CustomerTable extends VerticalLayout {
 		filterRow.getCell(lastNameColumn).setComponent(lastNameFilter);
 
 		customerTable.addItemClickListener(event -> {
+			
 			Window customerView = new Window();
 			CustomerDB customer = event.getItem();
 			customerView.setCaption("Customer " + customer.getFirstName() + " " + customer.getLastName());
@@ -103,9 +104,9 @@ public class CustomerTable extends VerticalLayout {
 			customerView.center();
 			customerView.setPositionY(50);
 			customerView.setPositionX(250);
-			customerView.setContent(new ViewCustomerForm(customer, this));
-
+			customerView.setContent(new CustomerForm(customerView, this, customer));
 			UI.getCurrent().addWindow(customerView);
+			
 		});
 
 		this.addComponent(customerTable);

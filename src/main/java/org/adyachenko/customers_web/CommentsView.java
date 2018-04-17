@@ -18,7 +18,7 @@ public class CommentsView extends VerticalLayout {
 	CustomerDB customer;
 	VerticalLayout commentsLayout;
 	private static final long serialVersionUID = 5282568066585928348L;
-
+	TextArea commentArea;
 	public CommentsView(CustomerDB customer) { 
 		this.addStyleName("customers-comment-view");
 		commentsLayout = new VerticalLayout();
@@ -31,7 +31,7 @@ public class CommentsView extends VerticalLayout {
 
 		Label commentLabel = new Label("Customer Comments");
 		this.addComponent(commentLabel);
-		TextArea commentArea = new TextArea("Comment text");
+		commentArea = new TextArea("Comment text");
 		this.addComponent(commentArea);
 		Button submitButton = new Button("Submit comment");
 
@@ -41,6 +41,7 @@ public class CommentsView extends VerticalLayout {
 			comment.setCustomer(customer);
 			comment.setCommentText(commentArea.getValue());
 			customerDataService.saveComment(comment);
+			commentArea.clear();
 			refreshComments(customerDataService);
 		});
 
@@ -53,7 +54,7 @@ public class CommentsView extends VerticalLayout {
 
 	private void refreshComments(CustomerDataService customerDataService) {
 		
-		this.commentsLayout.removeAllComponents();
+		this.commentsLayout.removeAllComponents(); 
 		ArrayList<CommentDB> customerComments = customerDataService.getCommentsForCustomer(customer);
 
 		if (customerComments != null && !customerComments.isEmpty()) {

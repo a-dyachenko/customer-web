@@ -1,12 +1,16 @@
 package org.adyachenko.customers_web;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.TextField;
@@ -21,10 +25,21 @@ import customers_core.db.CustomerStatusDB;
 
 public class CustomerTable extends VerticalLayout {
 
+	private static final String TH_ADDED_DATE = "Added Date";
+	private static final String TH_STATUS = "Status";
+	private static final String TH_ID = "Id";
+	private static final String TH_FIRST_NAME = "First Name";
+	private static final String TH_LAST_NAME = "Last Name";
+	private static final String LABEL_FIRST_NAME = "First Name...";
+	private static final String LABEL_LAST_NAME = "Last Name...";
+	private static final String LABEL_CUSTOMER_STATUS = "Customer Status";
+	private static final String LABEL_DATE_TIME_AFTER = "Date/Time (after)";
 	private static final String TABLE_FILTER_STYLE = "customer-table-filter-text";
+	private static final String TABLE_DATETIME_FILTER_STYLE = "customer-table-filter-datetime";
 	private static final String LAST_NAME_FILTER = "LastNameFilter";
 	private static final String FIRST_NAME_FILTER = "FirstNameFilter";
 	private static final String CUSTOMER_STATUS_FILTER = "CustomerStatusFilter";
+	private static final String DATE_TIME_FILTER = "DateTimeFilter";
 	private static final long serialVersionUID = 6514622108946607383L;
 	private Grid<CustomerDB> customerTable;
 
@@ -43,26 +58,25 @@ public class CustomerTable extends VerticalLayout {
 
 		ArrayList<CustomerDB> allCustomers = customerDataService.getAllCustomers();
 		customerTable.setItems(allCustomers);
-		customerTable.addColumn(CustomerDB::getId).setCaption("Id");
+		customerTable.addColumn(CustomerDB::getId).setCaption(TH_ID);
 
 		Column<CustomerDB, ?> firstNameColumn = customerTable.addColumn(CustomerDB::getFirstName)
-				.setCaption("First Name");
-		Column<CustomerDB, ?> lastNameColumn = customerTable.addColumn(CustomerDB::getLastName).setCaption("Last Name");
+				.setCaption(TH_FIRST_NAME);
+		Column<CustomerDB, ?> lastNameColumn = customerTable.addColumn(CustomerDB::getLastName).setCaption(TH_LAST_NAME);
 		Column<CustomerDB, ?> statusColumn = customerTable
-				.addColumn(customer -> customer.getCustomerStatus().getStatusName()).setCaption("Status");
-
-		Column<CustomerDB, ?> dateColumn = customerTable.addColumn(CustomerDB::getCreated).setCaption("Added Date");
+				.addColumn(customer -> customer.getCustomerStatus().getStatusName()).setCaption(TH_STATUS);
+		Column<CustomerDB, Date> dateTimeColumn = customerTable.addColumn(CustomerDB::getCreated).setCaption(TH_ADDED_DATE);
 
 		TextField firstNameFilter = new TextField();
 		firstNameFilter.setId(FIRST_NAME_FILTER);
 		firstNameFilter.addStyleName(TABLE_FILTER_STYLE);
-		firstNameFilter.setPlaceholder("First Name...");
+		firstNameFilter.setPlaceholder(LABEL_FIRST_NAME);
 
 		ArrayList<AbstractComponent> filterComponents = new ArrayList<>();
 
 		TextField lastNameFilter = new TextField();
 		lastNameFilter.addStyleName(TABLE_FILTER_STYLE);
-		lastNameFilter.setPlaceholder("Last Name...");
+		lastNameFilter.setPlaceholder(LABEL_LAST_NAME);
 		lastNameFilter.setId(LAST_NAME_FILTER);
 
 		firstNameFilter.addValueChangeListener(new ValueChangeListener<String>() {
@@ -84,7 +98,7 @@ public class CustomerTable extends VerticalLayout {
 
 		ArrayList<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
 		ComboBox<CustomerStatusDB> customerStatusFilter = new ComboBox<CustomerStatusDB>();
-		customerStatusFilter.setCaption("Customer Status");
+		customerStatusFilter.setCaption(LABEL_CUSTOMER_STATUS);
 		customerStatusFilter.setItems(customerStatuses);
 		customerStatusFilter.setItemCaptionGenerator(CustomerStatusDB::getStatusName);
 		customerStatusFilter.setId(CUSTOMER_STATUS_FILTER);
@@ -106,20 +120,41 @@ public class CustomerTable extends VerticalLayout {
 			}
 		});
 
+		DateField dateTimeFilter = new DateField();
+		dateTimeFilter.setCaption(LABEL_DATE_TIME_AFTER);
+		dateTimeFilter.setId(DATE_TIME_FILTER);
+		dateTimeFilter.addStyleName(TABLE_DATETIME_FILTER_STYLE);
+
+		dateTimeFilter.addValueChangeListener(new ValueChangeListener<LocalDate>() {
+
+			private static final long serialVersionUID = 5514635511759845516L;
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void valueChange(ValueChangeEvent<LocalDate> event) {
+				ListDataProvider<CustomerDB> dataProvider = (ListDataProvider<CustomerDB>) customerTable
+						.getDataProvider();
+
+				filterTableData(dataProvider, filterComponents);
+			}
+		});
+
 		filterComponents.add(firstNameFilter);
 		filterComponents.add(lastNameFilter);
 		filterComponents.add(customerStatusFilter);
+		filterComponents.add(dateTimeFilter);
 
 		filterRow.getCell(firstNameColumn).setComponent(firstNameFilter);
 		filterRow.getCell(lastNameColumn).setComponent(lastNameFilter);
 		filterRow.getCell(statusColumn).setComponent(customerStatusFilter);
+		filterRow.getCell(dateTimeColumn).setComponent(dateTimeFilter);
 
 		customerTable.addItemClickListener(event -> {
 
 			Window customerView = new Window();
 			CustomerDB customer = event.getItem();
 			customerView.setCaption("Customer " + customer.getFirstName() + " " + customer.getLastName());
-			customerView.setWidth("750");
+			customerView.setWidth("700");
 			customerView.center();
 			customerView.setPositionY(50);
 			customerView.setPositionX(250);
@@ -159,23 +194,34 @@ public class CustomerTable extends VerticalLayout {
 			if (componentId.equals(FIRST_NAME_FILTER)) {
 				dataProvider.addFilter(CustomerDB::getFirstName,
 						s -> caseInsensitiveContains(s, ((TextField) component).getValue().toString()));
-			} else if (componentId.equals(LAST_NAME_FILTER)) { 
+			} else if (componentId.equals(LAST_NAME_FILTER)) {
 				dataProvider.addFilter(CustomerDB::getLastName,
 						s -> caseInsensitiveContains(s, ((TextField) component).getValue().toString()));
-			} else if (componentId.equals(CUSTOMER_STATUS_FILTER)) { 
+			} else if (componentId.equals(CUSTOMER_STATUS_FILTER)) {
 				dataProvider.addFilter(CustomerDB::getCustomerStatus,
 						s -> statusEquals(s, ((ComboBox<CustomerStatusDB>) component).getValue()));
+			} else if (componentId.equals(DATE_TIME_FILTER)) {
+				dataProvider.addFilter(CustomerDB::getCreated,
+						s -> dateTimeAfter(s, ((DateField) component).getValue()));
 			}
+
 			dataProvider.refreshAll();
 
 		}
 
 	}
 
-	private boolean statusEquals(CustomerStatusDB where, CustomerStatusDB what) {
+	private Boolean statusEquals(CustomerStatusDB where, CustomerStatusDB what) {
 		if (where != null && what != null)
 			return (where.getId().equals(what.getId()));
 		return true;
+	}
+
+	private Boolean dateTimeAfter(Date where, LocalDate localDate) {
+		if (where != null)
+			return where.after(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+		else
+			return true;
 	}
 
 	private Boolean caseInsensitiveContains(String where, String what) {

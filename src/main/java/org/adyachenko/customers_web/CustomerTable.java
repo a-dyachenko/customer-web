@@ -218,7 +218,7 @@ public class CustomerTable extends VerticalLayout {
 	}
 
 	private Boolean dateTimeAfter(Date where, LocalDate localDate) {
-		if (where != null)
+		if (where != null && localDate != null)
 			return where.after(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
 		else
 			return true;

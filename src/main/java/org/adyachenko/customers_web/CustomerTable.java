@@ -79,22 +79,9 @@ public class CustomerTable extends VerticalLayout {
 		lastNameFilter.setPlaceholder(LABEL_LAST_NAME);
 		lastNameFilter.setId(LAST_NAME_FILTER);
 
-		firstNameFilter.addValueChangeListener(new ValueChangeListener<String>() {
+		firstNameFilter.addValueChangeListener(getTextFilterTableListener(filterComponents));
 
-			private static final long serialVersionUID = -5260840568446184561L;
-
-			@Override
-			public void valueChange(ValueChangeEvent<String> event) {
-				@SuppressWarnings("unchecked")
-				ListDataProvider<CustomerDB> dataProvider = (ListDataProvider<CustomerDB>) customerTable
-						.getDataProvider();
-
-				filterTableData(dataProvider, filterComponents);
-
-			}
-		});
-
-		lastNameFilter.addValueChangeListener(getFilterTableListener(filterComponents));
+		lastNameFilter.addValueChangeListener(getTextFilterTableListener(filterComponents));
 
 		ArrayList<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
 		ComboBox<CustomerStatusDB> customerStatusFilter = new ComboBox<CustomerStatusDB>();
@@ -167,7 +154,7 @@ public class CustomerTable extends VerticalLayout {
 
 	}
 
-	private ValueChangeListener<String> getFilterTableListener(ArrayList<AbstractComponent> filterComponents) {
+	private ValueChangeListener<String> getTextFilterTableListener(ArrayList<AbstractComponent> filterComponents) {
 		return new ValueChangeListener<String>() {
 
 			private static final long serialVersionUID = -5260840568446184561L;

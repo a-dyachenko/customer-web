@@ -1,7 +1,10 @@
-customers-web
+customer-web
 ==============
+Simple web-based Java / Vaadin application for listing / adding customers with certain info fields and possibility to add comments to each entry. 
 
-1) get customer-core first so the app is functional
+customer-web is the apps UI part, customer-core is data access / service API part.
+
+1) get customer-core  first so the app is functional https://github.com/a-dyachenko/customer-core
 2) create MySql database by running https://github.com/a-dyachenko/customer-web/blob/master/src/main/resources/customer_schema_init.sql
 3) update https://github.com/a-dyachenko/customer-core/blob/master/src/main/resources/hibernate.cfg.xml with db user / password
 

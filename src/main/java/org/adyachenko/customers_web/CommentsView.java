@@ -15,25 +15,37 @@ import customers_core.db.CustomerDB;
 
 public class CommentsView extends VerticalLayout {
 
+	private static final String LABEL_SUBMIT_COMMENT = "Submit comment"; 
+	
+	private static final String LABEL_COMMENT_TEXT = "Comment text"; 
+	
+	private static final String LABEL_CUSTOMER_COMMENTS = "Customer Comments";
+
+	private static final String STYLE_CUSTOMERS_COMMENT_LAYOUT = "customers-comment-layout"; 
+	
+	private static final String STYLE_CUSTOMERS_COMMENT_VIEW = "customers-comment-view"; 
+	
+	private static final String STYLE_CUSTOMER_COMMENT_TEXT = "customer-comment-text";
+	
 	CustomerDB customer;
 	VerticalLayout commentsLayout;
 	private static final long serialVersionUID = 5282568066585928348L;
 	TextArea commentArea;
 	public CommentsView(CustomerDB customer) { 
-		this.addStyleName("customers-comment-view");
+		this.addStyleName(STYLE_CUSTOMERS_COMMENT_VIEW);
 		commentsLayout = new VerticalLayout();
-		commentsLayout.addStyleName("customers-comment-layout");
+		commentsLayout.addStyleName(STYLE_CUSTOMERS_COMMENT_LAYOUT);
 		this.customer = customer;
 		this.build();
 	}
 
 	private void build() {
 
-		Label commentLabel = new Label("Customer Comments");
+		Label commentLabel = new Label(LABEL_CUSTOMER_COMMENTS);
 		this.addComponent(commentLabel);
-		commentArea = new TextArea("Comment text");
+		commentArea = new TextArea(LABEL_COMMENT_TEXT);
 		this.addComponent(commentArea);
-		Button submitButton = new Button("Submit comment");
+		Button submitButton = new Button(LABEL_SUBMIT_COMMENT);
 
 		CustomerDataService customerDataService = new CustomerDataService();
 		submitButton.addClickListener(click -> {
@@ -62,7 +74,9 @@ public class CommentsView extends VerticalLayout {
 			for (CommentDB comment : customerComments) {
 				
 				Panel commentWrapper = new Panel();
-				commentWrapper.setContent(new Label(comment.getCommentText(), ContentMode.PREFORMATTED)); 
+				Label commentText = new Label(comment.getCommentText(), ContentMode.PREFORMATTED);
+				commentText.addStyleName(STYLE_CUSTOMER_COMMENT_TEXT);
+				commentWrapper.setContent(commentText); 
 				commentsLayout.addComponent(commentWrapper);
 			}
 		}

@@ -25,26 +25,27 @@ import customers_core.db.CustomerStatusDB;
 
 public class CustomerTable extends VerticalLayout {
 
-	private static final String TH_ADDED_DATE = "Added Date";
-	private static final String TH_STATUS = "Status";
-	private static final String TH_ID = "Id";
-	private static final String TH_FIRST_NAME = "First Name";
-	private static final String TH_LAST_NAME = "Last Name";
-	private static final String LABEL_FIRST_NAME = "First Name...";
-	private static final String LABEL_LAST_NAME = "Last Name...";
-	private static final String LABEL_CUSTOMER_STATUS = "Customer Status";
-	private static final String LABEL_DATE_TIME_AFTER = "Date/Time (after)";
-	private static final String TABLE_FILTER_STYLE = "customer-table-filter-text";
-	private static final String TABLE_DATETIME_FILTER_STYLE = "customer-table-filter-datetime";
+	private static final String CUSTOMER_VIEW_WIDTH = "700";
+
+	private static final String FILTER_PLACEHOLDER_FIRST_NAME = "First Name...";
+	private static final String FILTER_PLACEHOLDER_LAST_NAME = "Last Name...";
+	private static final String FILTER_PLACEHOLDER_CUSTOMER_STATUS = "Customer Status";
+	private static final String FILTER_PLACEHOLDER_DATE_TIME_AFTER = "Date/Time (after)";
+
 	private static final String LAST_NAME_FILTER = "LastNameFilter";
 	private static final String FIRST_NAME_FILTER = "FirstNameFilter";
 	private static final String CUSTOMER_STATUS_FILTER = "CustomerStatusFilter";
 	private static final String DATE_TIME_FILTER = "DateTimeFilter";
+
+	private static final String STYLE_TABLE_FILTER = "customer-table-filter-text";
+	private static final String STYLE_TABLE_DATETIME_FILTER = "customer-table-filter-datetime";
+	private static final String STYLE_CUSTOMERS_TABLE_LAYOUT = "customers-table-layout";
+
 	private static final long serialVersionUID = 6514622108946607383L;
 	private Grid<CustomerDB> customerTable;
 
 	public CustomerTable() {
-		this.addStyleName("customers-table-layout");
+		this.addStyleName(STYLE_CUSTOMERS_TABLE_LAYOUT);
 		this.build();
 	}
 
@@ -58,25 +59,28 @@ public class CustomerTable extends VerticalLayout {
 
 		ArrayList<CustomerDB> allCustomers = customerDataService.getAllCustomers();
 		customerTable.setItems(allCustomers);
-		customerTable.addColumn(CustomerDB::getId).setCaption(TH_ID);
+		customerTable.addColumn(CustomerDB::getId).setCaption(CustomerConstants.LABEL_ID);
 
 		Column<CustomerDB, ?> firstNameColumn = customerTable.addColumn(CustomerDB::getFirstName)
-				.setCaption(TH_FIRST_NAME);
-		Column<CustomerDB, ?> lastNameColumn = customerTable.addColumn(CustomerDB::getLastName).setCaption(TH_LAST_NAME);
+				.setCaption(CustomerConstants.LABEL_FIRST_NAME);
+		Column<CustomerDB, ?> lastNameColumn = customerTable.addColumn(CustomerDB::getLastName)
+				.setCaption(CustomerConstants.LABEL_LAST_NAME);
 		Column<CustomerDB, ?> statusColumn = customerTable
-				.addColumn(customer -> customer.getCustomerStatus().getStatusName()).setCaption(TH_STATUS);
-		Column<CustomerDB, Date> dateTimeColumn = customerTable.addColumn(CustomerDB::getCreated).setCaption(TH_ADDED_DATE);
+				.addColumn(customer -> customer.getCustomerStatus().getStatusName())
+				.setCaption(CustomerConstants.LABEL_STATUS);
+		Column<CustomerDB, Date> dateTimeColumn = customerTable.addColumn(CustomerDB::getCreated)
+				.setCaption(CustomerConstants.LABEL_ADDED_DATE);
 
 		TextField firstNameFilter = new TextField();
 		firstNameFilter.setId(FIRST_NAME_FILTER);
-		firstNameFilter.addStyleName(TABLE_FILTER_STYLE);
-		firstNameFilter.setPlaceholder(LABEL_FIRST_NAME);
+		firstNameFilter.addStyleName(STYLE_TABLE_FILTER);
+		firstNameFilter.setPlaceholder(FILTER_PLACEHOLDER_FIRST_NAME);
 
 		ArrayList<AbstractComponent> filterComponents = new ArrayList<>();
 
 		TextField lastNameFilter = new TextField();
-		lastNameFilter.addStyleName(TABLE_FILTER_STYLE);
-		lastNameFilter.setPlaceholder(LABEL_LAST_NAME);
+		lastNameFilter.addStyleName(STYLE_TABLE_FILTER);
+		lastNameFilter.setPlaceholder(FILTER_PLACEHOLDER_LAST_NAME);
 		lastNameFilter.setId(LAST_NAME_FILTER);
 
 		firstNameFilter.addValueChangeListener(getTextFilterTableListener(filterComponents));
@@ -85,11 +89,11 @@ public class CustomerTable extends VerticalLayout {
 
 		ArrayList<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
 		ComboBox<CustomerStatusDB> customerStatusFilter = new ComboBox<CustomerStatusDB>();
-		customerStatusFilter.setCaption(LABEL_CUSTOMER_STATUS);
+		customerStatusFilter.setCaption(FILTER_PLACEHOLDER_CUSTOMER_STATUS);
 		customerStatusFilter.setItems(customerStatuses);
 		customerStatusFilter.setItemCaptionGenerator(CustomerStatusDB::getStatusName);
 		customerStatusFilter.setId(CUSTOMER_STATUS_FILTER);
-		customerStatusFilter.addStyleName(TABLE_FILTER_STYLE);
+		customerStatusFilter.addStyleName(STYLE_TABLE_FILTER);
 
 		customerStatusFilter.addValueChangeListener(new ValueChangeListener<CustomerStatusDB>() {
 
@@ -101,16 +105,14 @@ public class CustomerTable extends VerticalLayout {
 				@SuppressWarnings("unchecked")
 				ListDataProvider<CustomerDB> dataProvider = (ListDataProvider<CustomerDB>) customerTable
 						.getDataProvider();
-
 				filterTableData(dataProvider, filterComponents);
-
 			}
 		});
 
 		DateField dateTimeFilter = new DateField();
-		dateTimeFilter.setCaption(LABEL_DATE_TIME_AFTER);
+		dateTimeFilter.setCaption(FILTER_PLACEHOLDER_DATE_TIME_AFTER);
 		dateTimeFilter.setId(DATE_TIME_FILTER);
-		dateTimeFilter.addStyleName(TABLE_DATETIME_FILTER_STYLE);
+		dateTimeFilter.addStyleName(STYLE_TABLE_DATETIME_FILTER);
 
 		dateTimeFilter.addValueChangeListener(new ValueChangeListener<LocalDate>() {
 
@@ -140,8 +142,9 @@ public class CustomerTable extends VerticalLayout {
 
 			Window customerView = new Window();
 			CustomerDB customer = event.getItem();
-			customerView.setCaption("Customer " + customer.getFirstName() + " " + customer.getLastName());
-			customerView.setWidth("700");
+			String CAPTION_CUSTOMER = "Customer ";
+			customerView.setCaption(CAPTION_CUSTOMER + customer.getFirstName() + " " + customer.getLastName());
+			customerView.setWidth(CUSTOMER_VIEW_WIDTH);
 			customerView.center();
 			customerView.setPositionY(50);
 			customerView.setPositionX(250);
@@ -193,7 +196,6 @@ public class CustomerTable extends VerticalLayout {
 			}
 
 			dataProvider.refreshAll();
-
 		}
 
 	}
@@ -220,7 +222,6 @@ public class CustomerTable extends VerticalLayout {
 
 	public void refreshTable() {
 		CustomerDataService customerDataService = new CustomerDataService();
-
 		ArrayList<CustomerDB> allCustomers = customerDataService.getAllCustomers();
 		customerTable.setItems(allCustomers);
 		customerTable.getDataProvider().refreshAll();

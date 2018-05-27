@@ -24,25 +24,29 @@ import com.vaadin.ui.Window;
 @Theme("mytheme")
 public class CustomersUI extends UI {
 
+	private static final String TITLE_CREATE_CUSTOMER = "Create Customer";
+
+	private static final String LABEL_CUSTOMER_DATABASE_APPLICATION = "Customer Database Application";
+	
 	private static final long serialVersionUID = 6407949651043622490L;
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
 
 		final VerticalLayout layout = new VerticalLayout();
-		Label caption = new Label("Customer Database Application");
+		Label caption = new Label(LABEL_CUSTOMER_DATABASE_APPLICATION);
 		caption.addStyleName("customer-ui-label");
 		layout.addComponent(caption);
 
 		CustomerTable customerTable = new CustomerTable();
 
 		layout.addComponent(customerTable);
-		Button newCustomerButton = new Button("Add New Customer");
+		Button newCustomerButton = new Button(CustomerConstants.BUTTON_ADD_NEW_CUSTOMER);
 		newCustomerButton.addClickListener(click -> {
 
 			if (getWindows().size() == 0) {
 
-				Window popupWindow = new Window("Create Customer");
+				Window popupWindow = new Window(TITLE_CREATE_CUSTOMER);
 				popupWindow.setContent(new CustomerForm(popupWindow, customerTable));
 				popupWindow.setWidth("700");
 				popupWindow.center();
@@ -59,10 +63,10 @@ public class CustomersUI extends UI {
 		setContent(layout);
 	}
 
-	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
+	@WebServlet(urlPatterns = "/*", name = MyUIServlet.CUSTOMER_APP_SERVLET, asyncSupported = true)
 	@VaadinServletConfiguration(ui = CustomersUI.class, productionMode = false)
-	public static class MyUIServlet extends VaadinServlet {
-
+	public static class MyUIServlet extends VaadinServlet { 
+		static final String CUSTOMER_APP_SERVLET = "CustomerAppServlet";
 		private static final long serialVersionUID = 8610851045526217362L;
 	}
 

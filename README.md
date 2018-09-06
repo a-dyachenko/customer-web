@@ -9,7 +9,6 @@ customer-web is the apps UI part, customer-core is data access / service API par
 3) update https://github.com/a-dyachenko/customer-core/blob/master/src/main/resources/hibernate.cfg.xml with db user / password
 
 
-Template for a simple Vaadin application that only requires a Servlet 3.0 container to run.
 
 
 Workflow

@@ -24,6 +24,8 @@ import com.vaadin.ui.Window;
 @Theme("mytheme")
 public class CustomersUI extends UI {
 
+	private static final String STYLE_CUSTOMER_UI_LABEL = "customer-ui-label";
+
 	private static final String TITLE_CREATE_CUSTOMER = "Create Customer";
 
 	private static final String LABEL_CUSTOMER_DATABASE_APPLICATION = "Customer Database Application";
@@ -35,7 +37,7 @@ public class CustomersUI extends UI {
 
 		final VerticalLayout layout = new VerticalLayout();
 		Label caption = new Label(LABEL_CUSTOMER_DATABASE_APPLICATION);
-		caption.addStyleName("customer-ui-label");
+		caption.addStyleName(STYLE_CUSTOMER_UI_LABEL);
 		layout.addComponent(caption);
 
 		CustomerTable customerTable = new CustomerTable();

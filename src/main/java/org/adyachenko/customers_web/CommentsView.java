@@ -1,6 +1,9 @@
 package org.adyachenko.customers_web;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
@@ -15,23 +18,27 @@ import customers_core.db.CustomerDB;
 
 public class CommentsView extends VerticalLayout {
 
-	private static final String LABEL_SUBMIT_COMMENT = "Submit comment"; 
-	
-	private static final String LABEL_COMMENT_TEXT = "Comment text"; 
-	
+	private static final String LABEL_SUBMIT_COMMENT = "Submit comment";
+
+	private static final String LABEL_COMMENT_TEXT = "Comment text";
+
 	private static final String LABEL_CUSTOMER_COMMENTS = "Customer Comments";
 
-	private static final String STYLE_CUSTOMERS_COMMENT_LAYOUT = "customers-comment-layout"; 
-	
-	private static final String STYLE_CUSTOMERS_COMMENT_VIEW = "customers-comment-view"; 
-	
+	private static final String STYLE_CUSTOMERS_COMMENT_LAYOUT = "customers-comment-layout";
+
+	private static final String STYLE_CUSTOMERS_COMMENT_VIEW = "customers-comment-view";
+
 	private static final String STYLE_CUSTOMER_COMMENT_TEXT = "customer-comment-text";
-	
+
 	CustomerDB customer;
 	VerticalLayout commentsLayout;
 	private static final long serialVersionUID = 5282568066585928348L;
 	TextArea commentArea;
-	public CommentsView(CustomerDB customer) { 
+
+
+    private static final Logger logger = LogManager.getLogger(CommentsView.class);
+
+	public CommentsView(CustomerDB customer) {
 		this.addStyleName(STYLE_CUSTOMERS_COMMENT_VIEW);
 		commentsLayout = new VerticalLayout();
 		commentsLayout.addStyleName(STYLE_CUSTOMERS_COMMENT_LAYOUT);
@@ -48,35 +55,40 @@ public class CommentsView extends VerticalLayout {
 		Button submitButton = new Button(LABEL_SUBMIT_COMMENT);
 
 		CustomerDataService customerDataService = new CustomerDataService();
+
 		submitButton.addClickListener(click -> {
-			CommentDB comment = new CommentDB();
-			comment.setCustomer(customer);
-			comment.setCommentText(commentArea.getValue());
-			customerDataService.saveComment(comment);
-			commentArea.clear();
-			refreshComments(customerDataService);
+			String commentText = commentArea.getValue();
+			logger.info("COMMENT TEXT " + commentText);
+			if (commentText != null && !commentText.isEmpty()) {
+				CommentDB comment = new CommentDB();
+				comment.setCustomer(customer);
+				comment.setCommentText(commentArea.getValue());
+				customerDataService.saveComment(comment);
+				commentArea.clear();
+				refreshComments(customerDataService);
+			}
 		});
 
-		this.addComponent(submitButton); 
+		this.addComponent(submitButton);
 		this.addComponent(commentsLayout);
-		
+
 		refreshComments(customerDataService);
 
 	}
 
 	private void refreshComments(CustomerDataService customerDataService) {
-		
-		this.commentsLayout.removeAllComponents(); 
+
+		this.commentsLayout.removeAllComponents();
 		ArrayList<CommentDB> customerComments = customerDataService.getCommentsForCustomer(customer);
 
 		if (customerComments != null && !customerComments.isEmpty()) {
-			 
+
 			for (CommentDB comment : customerComments) {
-				
+
 				Panel commentWrapper = new Panel();
 				Label commentText = new Label(comment.getCommentText(), ContentMode.PREFORMATTED);
 				commentText.addStyleName(STYLE_CUSTOMER_COMMENT_TEXT);
-				commentWrapper.setContent(commentText); 
+				commentWrapper.setContent(commentText);
 				commentsLayout.addComponent(commentWrapper);
 			}
 		}

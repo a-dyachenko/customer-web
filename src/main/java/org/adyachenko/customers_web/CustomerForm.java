@@ -13,6 +13,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import customer_core.service.CustomerDataService;
+import customers_core.dao.CustomerCoreSessionProvider;
 import customers_core.db.CustomerDB;
 import customers_core.db.CustomerStatusDB;
 
@@ -70,7 +71,7 @@ public class CustomerForm extends VerticalLayout {
 				CustomerDB::setCustomerAddress);
 		form.addComponent(addressField);
 
-		CustomerDataService customerDataService = new CustomerDataService();
+		CustomerDataService customerDataService = new CustomerDataService(new CustomerCoreSessionProvider());
 
 		ArrayList<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
 		ComboBox<CustomerStatusDB> customerStatusesSelect = new ComboBox<CustomerStatusDB>();

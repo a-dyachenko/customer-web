@@ -1,6 +1,6 @@
 package org.adyachenko.customers_web;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
@@ -26,6 +26,11 @@ public class CustomerForm extends VerticalLayout {
 	private CustomerDB customer;
 	private boolean formEditing = false;
 
+	public static CustomerForm getCustomerForm(Window containerWindow, CustomerTable customerTable,
+			CustomerDB customer) {
+		return new CustomerForm(containerWindow, customerTable, customer);
+	}
+
 	public CustomerForm(Window containerWindow, CustomerTable customerTable) {
 		this.containerWindow = containerWindow;
 		this.customerTable = customerTable;
@@ -44,13 +49,14 @@ public class CustomerForm extends VerticalLayout {
 	private void buildForm() {
 
 		FormLayout form = new FormLayout();
+
 		Binder<CustomerDB> binder = new Binder<CustomerDB>();
 
 		TextField firstNameField = new TextField(CustomerConstants.LABEL_FIRST_NAME);
 		firstNameField.setRequiredIndicatorVisible(true);
 
-		binder.forField(firstNameField).asRequired(CustomerConstants.LABEL_REQUIRED_FIELD).bind(CustomerDB::getFirstName,
-				CustomerDB::setFirstName);
+		binder.forField(firstNameField).asRequired(CustomerConstants.LABEL_REQUIRED_FIELD)
+				.bind(CustomerDB::getFirstName, CustomerDB::setFirstName);
 
 		form.addComponent(firstNameField);
 
@@ -67,13 +73,13 @@ public class CustomerForm extends VerticalLayout {
 		form.addComponent(phoneNumberField);
 
 		TextField addressField = new TextField(CustomerConstants.LABEL_ADDRESS);
-		binder.forField(addressField).asRequired(CustomerConstants.LABEL_REQUIRED_FIELD).bind(CustomerDB::getCustomerAddress,
-				CustomerDB::setCustomerAddress);
+		binder.forField(addressField).asRequired(CustomerConstants.LABEL_REQUIRED_FIELD)
+				.bind(CustomerDB::getCustomerAddress, CustomerDB::setCustomerAddress);
 		form.addComponent(addressField);
 
 		CustomerDataService customerDataService = new CustomerDataService(new CustomerCoreSessionProvider());
 
-		ArrayList<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
+		List<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
 		ComboBox<CustomerStatusDB> customerStatusesSelect = new ComboBox<CustomerStatusDB>();
 
 		customerStatusesSelect.setCaption(CustomerConstants.CUSTOMER_STATUS);
@@ -115,7 +121,7 @@ public class CustomerForm extends VerticalLayout {
 						this.customerTable.refreshTable();
 
 					containerWindow.setCaption("Customer " + customer.getId());
-					this.containerWindow.setContent(new CustomerForm(containerWindow, customerTable, customer));
+					this.containerWindow.setContent(getCustomerForm(containerWindow, customerTable, customer));
 					Notification.show("Customer " + customer.getFirstName() + " " + customer.getLastName()
 							+ " saved successfully ");
 

@@ -43,19 +43,14 @@ public class CustomersUI extends UI {
 		CustomerTable customerTable = new CustomerTable();
 
 		layout.addComponent(customerTable);
+		
 		Button newCustomerButton = new Button(CustomerConstants.BUTTON_ADD_NEW_CUSTOMER);
+		
 		newCustomerButton.addClickListener(click -> {
 
 			if (getWindows().size() == 0) {
 
-				Window popupWindow = new Window(TITLE_CREATE_CUSTOMER);
-				popupWindow.setContent(new CustomerForm(popupWindow, customerTable));
-				popupWindow.setWidth("700");
-				popupWindow.center();
-				popupWindow.setPositionY(50);
-				popupWindow.setPositionX(250);
-				popupWindow.setResizable(false);
-				addWindow(popupWindow);
+				CustomerWindow.popupNewCustomerWindow(customerTable);  
 			}
 
 		});

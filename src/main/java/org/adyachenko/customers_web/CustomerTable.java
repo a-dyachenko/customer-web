@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
@@ -42,6 +43,8 @@ public class CustomerTable extends VerticalLayout {
 	private static final String STYLE_CUSTOMERS_TABLE_LAYOUT = "customers-table-layout";
 
 	private static final long serialVersionUID = 6514622108946607383L;
+
+	private static final String STYLE_CUSTOMERS_VIEW = "customer-view";
 	private Grid<CustomerDB> customerTable;
 
 	public CustomerTable() {
@@ -57,7 +60,7 @@ public class CustomerTable extends VerticalLayout {
 		customerTable.setSizeFull();
 		HeaderRow filterRow = customerTable.appendHeaderRow();
 
-		ArrayList<CustomerDB> allCustomers = customerDataService.getAllCustomers();
+		List<CustomerDB> allCustomers = customerDataService.getAllCustomers();
 		customerTable.setItems(allCustomers);
 		customerTable.addColumn(CustomerDB::getId).setCaption(CustomerConstants.LABEL_ID);
 
@@ -87,7 +90,7 @@ public class CustomerTable extends VerticalLayout {
 
 		lastNameFilter.addValueChangeListener(getTextFilterTableListener(filterComponents));
 
-		ArrayList<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
+		List<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
 		ComboBox<CustomerStatusDB> customerStatusFilter = new ComboBox<CustomerStatusDB>();
 		customerStatusFilter.setCaption(FILTER_PLACEHOLDER_CUSTOMER_STATUS);
 		customerStatusFilter.setItems(customerStatuses);
@@ -140,16 +143,8 @@ public class CustomerTable extends VerticalLayout {
 
 		customerTable.addItemClickListener(event -> {
 
-			Window customerView = new Window();
 			CustomerDB customer = event.getItem();
-			String CAPTION_CUSTOMER = "Customer ";
-			customerView.setCaption(CAPTION_CUSTOMER + customer.getFirstName() + " " + customer.getLastName());
-			customerView.setWidth(CUSTOMER_VIEW_WIDTH);
-			customerView.center();
-			customerView.setPositionY(50);
-			customerView.setPositionX(250);
-			customerView.setContent(new CustomerForm(customerView, this, customer));
-			UI.getCurrent().addWindow(customerView);
+			CustomerWindow.popupCustomerWindow(this, customer);
 
 		});
 
@@ -222,7 +217,7 @@ public class CustomerTable extends VerticalLayout {
 
 	public void refreshTable() {
 		CustomerDataService customerDataService = new CustomerDataService();
-		ArrayList<CustomerDB> allCustomers = customerDataService.getAllCustomers();
+		List<CustomerDB> allCustomers = customerDataService.getAllCustomers();
 		customerTable.setItems(allCustomers);
 		customerTable.getDataProvider().refreshAll();
 	}

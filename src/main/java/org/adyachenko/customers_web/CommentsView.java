@@ -58,7 +58,6 @@ public class CommentsView extends VerticalLayout {
 
 		submitButton.addClickListener(click -> {
 			String commentText = commentArea.getValue();
-			logger.info("COMMENT TEXT " + commentText);
 			if (commentText != null && !commentText.isEmpty()) {
 				CommentDB comment = new CommentDB();
 				comment.setCustomer(customer);

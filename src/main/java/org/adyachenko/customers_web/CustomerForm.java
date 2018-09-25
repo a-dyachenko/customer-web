@@ -31,14 +31,11 @@ public class CustomerForm extends VerticalLayout {
 		return new CustomerForm(containerWindow, customerTable, customer);
 	}
 
-	public CustomerForm(Window containerWindow, CustomerTable customerTable) {
-		this.containerWindow = containerWindow;
-		this.customerTable = customerTable;
-		this.formEditing = true;
-		this.buildForm();
+	public static CustomerForm getNewCustomerForm(Window containerWindow, CustomerTable customerTable) {
+		return new CustomerForm(containerWindow, customerTable, null);
 	}
 
-	public CustomerForm(Window containerWindow, CustomerTable customerTable, CustomerDB customer) {
+	private CustomerForm(Window containerWindow, CustomerTable customerTable, CustomerDB customer) {
 		this.containerWindow = containerWindow;
 		this.customerTable = customerTable;
 		this.customer = customer;

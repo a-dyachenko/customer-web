@@ -10,7 +10,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -25,8 +24,6 @@ import com.vaadin.ui.Window;
 public class CustomersUI extends UI {
 
 	private static final String STYLE_CUSTOMER_UI_LABEL = "customer-ui-label";
-
-	private static final String TITLE_CREATE_CUSTOMER = "Create Customer";
 
 	private static final String LABEL_CUSTOMER_DATABASE_APPLICATION = "Customer Database Application";
 	

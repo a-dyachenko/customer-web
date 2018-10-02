@@ -15,9 +15,7 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderRow;
 
 import customer_core.service.CustomerDataService;
@@ -25,8 +23,6 @@ import customers_core.db.CustomerDB;
 import customers_core.db.CustomerStatusDB;
 
 public class CustomerTable extends VerticalLayout {
-
-	private static final String CUSTOMER_VIEW_WIDTH = "700";
 
 	private static final String FILTER_PLACEHOLDER_FIRST_NAME = "First Name...";
 	private static final String FILTER_PLACEHOLDER_LAST_NAME = "Last Name...";
@@ -44,7 +40,6 @@ public class CustomerTable extends VerticalLayout {
 
 	private static final long serialVersionUID = 6514622108946607383L;
 
-	private static final String STYLE_CUSTOMERS_VIEW = "customer-view";
 	private Grid<CustomerDB> customerTable;
 
 	public CustomerTable() {
@@ -197,7 +192,7 @@ public class CustomerTable extends VerticalLayout {
 
 	private Boolean statusEquals(CustomerStatusDB where, CustomerStatusDB what) {
 		if (where != null && what != null)
-			return (where.getId().equals(what.getId()));
+			return (where.getId() == (what.getId()));
 		return true;
 	}
 

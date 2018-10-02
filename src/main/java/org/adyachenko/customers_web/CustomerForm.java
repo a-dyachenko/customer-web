@@ -28,18 +28,20 @@ public class CustomerForm extends VerticalLayout {
 
 	public static CustomerForm getCustomerForm(Window containerWindow, CustomerTable customerTable,
 			CustomerDB customer) {
-		return new CustomerForm(containerWindow, customerTable, customer);
+		CustomerForm existingCustomerForm = new CustomerForm(containerWindow, customerTable, customer, false);
+		return existingCustomerForm;
 	}
 
 	public static CustomerForm getNewCustomerForm(Window containerWindow, CustomerTable customerTable) {
-		return new CustomerForm(containerWindow, customerTable, null);
+		CustomerForm newCustomerForm = new CustomerForm(containerWindow, customerTable, null, true); 
+		return newCustomerForm;
 	}
 
-	private CustomerForm(Window containerWindow, CustomerTable customerTable, CustomerDB customer) {
+	private CustomerForm(Window containerWindow, CustomerTable customerTable, CustomerDB customer, boolean formEditing) {
 		this.containerWindow = containerWindow;
 		this.customerTable = customerTable;
 		this.customer = customer;
-		this.formEditing = false;
+		this.formEditing = formEditing;
 		this.buildForm();
 	}
 
@@ -122,8 +124,7 @@ public class CustomerForm extends VerticalLayout {
 					Notification.show("Customer " + customer.getFirstName() + " " + customer.getLastName()
 							+ " saved successfully ");
 
-				} catch (ValidationException e1) {
-					// TODO Auto-generated catch block
+				} catch (ValidationException e1) { 
 
 					Notification.show("Customer could not be saved, please check error messages for each field");
 				}

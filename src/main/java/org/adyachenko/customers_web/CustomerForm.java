@@ -28,12 +28,14 @@ public class CustomerForm extends VerticalLayout {
 
 	public static CustomerForm getCustomerForm(Window containerWindow, CustomerTable customerTable,
 			CustomerDB customer) {
-		CustomerForm existingCustomerForm = new CustomerForm(containerWindow, customerTable, customer, false);
+		boolean formEditing = false;
+		CustomerForm existingCustomerForm = new CustomerForm(containerWindow, customerTable, customer, formEditing);
 		return existingCustomerForm;
 	}
 
 	public static CustomerForm getNewCustomerForm(Window containerWindow, CustomerTable customerTable) {
-		CustomerForm newCustomerForm = new CustomerForm(containerWindow, customerTable, null, true); 
+		boolean formEditing = true;
+		CustomerForm newCustomerForm = new CustomerForm(containerWindow, customerTable, null, formEditing); 
 		return newCustomerForm;
 	}
 
@@ -76,7 +78,7 @@ public class CustomerForm extends VerticalLayout {
 				.bind(CustomerDB::getCustomerAddress, CustomerDB::setCustomerAddress);
 		form.addComponent(addressField);
 
-		CustomerDataService customerDataService = new CustomerDataService(new CustomerCoreSessionProvider());
+		CustomerDataService customerDataService = CustomerDataService.getCustomerDataService(new CustomerCoreSessionProvider());
 
 		List<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
 		ComboBox<CustomerStatusDB> customerStatusesSelect = new ComboBox<CustomerStatusDB>();

@@ -13,6 +13,7 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.VerticalLayout;
 
 import customer_core.service.CustomerDataService;
+import customers_core.dao.CustomerCoreSessionProvider;
 import customers_core.db.CommentDB;
 import customers_core.db.CustomerDB;
 
@@ -54,7 +55,7 @@ public class CommentsView extends VerticalLayout {
 		this.addComponent(commentArea);
 		Button submitButton = new Button(LABEL_SUBMIT_COMMENT);
 
-		CustomerDataService customerDataService = new CustomerDataService();
+		CustomerDataService customerDataService = CustomerDataService.getCustomerDataService(new CustomerCoreSessionProvider());
 
 		submitButton.addClickListener(click -> {
 			String commentText = commentArea.getValue();

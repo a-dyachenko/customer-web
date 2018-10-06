@@ -19,6 +19,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderRow;
 
 import customer_core.service.CustomerDataService;
+import customers_core.dao.CustomerCoreSessionProvider;
 import customers_core.db.CustomerDB;
 import customers_core.db.CustomerStatusDB;
 
@@ -37,7 +38,7 @@ public class CustomerTable extends VerticalLayout {
 	private static final String STYLE_TABLE_FILTER = "customer-table-filter-text";
 	private static final String STYLE_TABLE_DATETIME_FILTER = "customer-table-filter-datetime";
 	private static final String STYLE_CUSTOMERS_TABLE_LAYOUT = "customers-table-layout";
-
+	private CustomerDataService customerDataService;
 	private static final long serialVersionUID = 6514622108946607383L;
 
 	private Grid<CustomerDB> customerTable;
@@ -49,10 +50,11 @@ public class CustomerTable extends VerticalLayout {
 
 	private void build() {
 
-		CustomerDataService customerDataService = new CustomerDataService();
-
 		customerTable = new Grid<>();
 		customerTable.setSizeFull();
+
+		customerDataService = CustomerDataService.getCustomerDataService(new CustomerCoreSessionProvider());
+
 		HeaderRow filterRow = customerTable.appendHeaderRow();
 
 		List<CustomerDB> allCustomers = customerDataService.getAllCustomers();
@@ -211,7 +213,6 @@ public class CustomerTable extends VerticalLayout {
 	}
 
 	public void refreshTable() {
-		CustomerDataService customerDataService = new CustomerDataService();
 		List<CustomerDB> allCustomers = customerDataService.getAllCustomers();
 		customerTable.setItems(allCustomers);
 		customerTable.getDataProvider().refreshAll();

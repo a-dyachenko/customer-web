@@ -26,7 +26,7 @@ public class CustomersUI extends UI {
 	private static final String STYLE_CUSTOMER_UI_LABEL = "customer-ui-label";
 
 	private static final String LABEL_CUSTOMER_DATABASE_APPLICATION = "Customer Database Application";
-	
+
 	private static final long serialVersionUID = 6407949651043622490L;
 
 	@Override
@@ -40,14 +40,14 @@ public class CustomersUI extends UI {
 		CustomerTable customerTable = new CustomerTable();
 
 		layout.addComponent(customerTable);
-		
+
 		Button newCustomerButton = new Button(CustomerConstants.BUTTON_ADD_NEW_CUSTOMER);
-		
+
 		newCustomerButton.addClickListener(click -> {
 
 			if (getWindows().size() == 0) {
 
-				CustomerWindow.popupNewCustomerWindow(customerTable);  
+				CustomerWindow.popupNewCustomerWindow(customerTable);
 			}
 
 		});
@@ -59,7 +59,7 @@ public class CustomersUI extends UI {
 
 	@WebServlet(urlPatterns = "/*", name = MyUIServlet.CUSTOMER_APP_SERVLET, asyncSupported = true)
 	@VaadinServletConfiguration(ui = CustomersUI.class, productionMode = false)
-	public static class MyUIServlet extends VaadinServlet { 
+	public static class MyUIServlet extends VaadinServlet {
 		static final String CUSTOMER_APP_SERVLET = "CustomerAppServlet";
 		private static final long serialVersionUID = 8610851045526217362L;
 	}

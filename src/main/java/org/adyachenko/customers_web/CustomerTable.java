@@ -41,6 +41,8 @@ public class CustomerTable extends VerticalLayout {
 	private CustomerDataService customerDataService;
 	private static final long serialVersionUID = 6514622108946607383L;
 
+	List<AbstractComponent> filterComponents;
+
 	private Grid<CustomerDB> customerTable;
 
 	public CustomerTable() {
@@ -50,9 +52,9 @@ public class CustomerTable extends VerticalLayout {
 
 	private void build() {
 
+		filterComponents = new ArrayList<AbstractComponent>();
 		customerTable = new Grid<>();
 		customerTable.setSizeFull();
-
 		customerDataService = CustomerDataService.getCustomerDataService(new CustomerCoreSessionProvider());
 
 		HeaderRow filterRow = customerTable.appendHeaderRow();
@@ -61,6 +63,8 @@ public class CustomerTable extends VerticalLayout {
 		customerTable.setItems(allCustomers);
 		customerTable.addColumn(CustomerDB::getId).setCaption(CustomerConstants.LABEL_ID);
 
+		/// columns 
+		
 		Column<CustomerDB, ?> firstNameColumn = customerTable.addColumn(CustomerDB::getFirstName)
 				.setCaption(CustomerConstants.LABEL_FIRST_NAME);
 		Column<CustomerDB, ?> lastNameColumn = customerTable.addColumn(CustomerDB::getLastName)
@@ -71,71 +75,21 @@ public class CustomerTable extends VerticalLayout {
 		Column<CustomerDB, Date> dateTimeColumn = customerTable.addColumn(CustomerDB::getCreated)
 				.setCaption(CustomerConstants.LABEL_ADDED_DATE);
 
-		TextField firstNameFilter = new TextField();
-		firstNameFilter.setId(FIRST_NAME_FILTER);
-		firstNameFilter.addStyleName(STYLE_TABLE_FILTER);
-		firstNameFilter.setPlaceholder(FILTER_PLACEHOLDER_FIRST_NAME);
-
-		ArrayList<AbstractComponent> filterComponents = new ArrayList<>();
-
-		TextField lastNameFilter = new TextField();
-		lastNameFilter.addStyleName(STYLE_TABLE_FILTER);
-		lastNameFilter.setPlaceholder(FILTER_PLACEHOLDER_LAST_NAME);
-		lastNameFilter.setId(LAST_NAME_FILTER);
-
-		firstNameFilter.addValueChangeListener(getTextFilterTableListener(filterComponents));
-
-		lastNameFilter.addValueChangeListener(getTextFilterTableListener(filterComponents));
-
-		List<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
-		ComboBox<CustomerStatusDB> customerStatusFilter = new ComboBox<CustomerStatusDB>();
-		customerStatusFilter.setCaption(FILTER_PLACEHOLDER_CUSTOMER_STATUS);
-		customerStatusFilter.setItems(customerStatuses);
-		customerStatusFilter.setItemCaptionGenerator(CustomerStatusDB::getStatusName);
-		customerStatusFilter.setId(CUSTOMER_STATUS_FILTER);
-		customerStatusFilter.addStyleName(STYLE_TABLE_FILTER);
-
-		customerStatusFilter.addValueChangeListener(new ValueChangeListener<CustomerStatusDB>() {
-
-			private static final long serialVersionUID = 8157010827221095855L;
-
-			@Override
-			public void valueChange(ValueChangeEvent<CustomerStatusDB> event) {
-
-				@SuppressWarnings("unchecked")
-				ListDataProvider<CustomerDB> dataProvider = (ListDataProvider<CustomerDB>) customerTable
-						.getDataProvider();
-				filterTableData(dataProvider, filterComponents);
-			}
-		});
-
-		DateField dateTimeFilter = new DateField();
-		dateTimeFilter.setCaption(FILTER_PLACEHOLDER_DATE_TIME_AFTER);
-		dateTimeFilter.setId(DATE_TIME_FILTER);
-		dateTimeFilter.addStyleName(STYLE_TABLE_DATETIME_FILTER);
-
-		dateTimeFilter.addValueChangeListener(new ValueChangeListener<LocalDate>() {
-
-			private static final long serialVersionUID = 5514635511759845516L;
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public void valueChange(ValueChangeEvent<LocalDate> event) {
-				ListDataProvider<CustomerDB> dataProvider = (ListDataProvider<CustomerDB>) customerTable
-						.getDataProvider();
-
-				filterTableData(dataProvider, filterComponents);
-			}
-		});
-
+		/// set column filters 
+		TextField firstNameFilter = getTextTableFilter(FILTER_PLACEHOLDER_FIRST_NAME, FIRST_NAME_FILTER); 
 		filterComponents.add(firstNameFilter);
-		filterComponents.add(lastNameFilter);
-		filterComponents.add(customerStatusFilter);
-		filterComponents.add(dateTimeFilter);
-
 		filterRow.getCell(firstNameColumn).setComponent(firstNameFilter);
+		
+		TextField lastNameFilter = getTextTableFilter(FILTER_PLACEHOLDER_LAST_NAME, LAST_NAME_FILTER); 
+		filterComponents.add(lastNameFilter);
 		filterRow.getCell(lastNameColumn).setComponent(lastNameFilter);
+		
+		ComboBox<CustomerStatusDB> customerStatusFilter = getCustomerStatusFilter(); 
+		filterComponents.add(customerStatusFilter);
 		filterRow.getCell(statusColumn).setComponent(customerStatusFilter);
+		
+		DateField dateTimeFilter = getDateTimeFilter(); 
+		filterComponents.add(dateTimeFilter); 
 		filterRow.getCell(dateTimeColumn).setComponent(dateTimeFilter);
 
 		customerTable.addItemClickListener(event -> {
@@ -149,25 +103,68 @@ public class CustomerTable extends VerticalLayout {
 
 	}
 
-	private ValueChangeListener<String> getTextFilterTableListener(ArrayList<AbstractComponent> filterComponents) {
-		return new ValueChangeListener<String>() {
+	private DateField getDateTimeFilter() {
+		DateField dateTimeFilter = new DateField();
+		dateTimeFilter.setCaption(FILTER_PLACEHOLDER_DATE_TIME_AFTER);
+		dateTimeFilter.setId(DATE_TIME_FILTER);
+		dateTimeFilter.addStyleName(STYLE_TABLE_DATETIME_FILTER);
 
+		dateTimeFilter.addValueChangeListener(new ValueChangeListener<LocalDate>() {
+
+			private static final long serialVersionUID = 5514635511759845516L;
+
+			@Override
+			public void valueChange(ValueChangeEvent<LocalDate> event) {
+
+				filterTableData();
+			}
+		});
+		return dateTimeFilter;
+	}
+
+	private ComboBox<CustomerStatusDB> getCustomerStatusFilter() {
+		ComboBox<CustomerStatusDB> customerStatusFilter = new ComboBox<CustomerStatusDB>();
+		List<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
+		customerStatusFilter.setCaption(FILTER_PLACEHOLDER_CUSTOMER_STATUS);
+		customerStatusFilter.setItems(customerStatuses);
+		customerStatusFilter.setItemCaptionGenerator(CustomerStatusDB::getStatusName);
+		customerStatusFilter.setId(CUSTOMER_STATUS_FILTER);
+		customerStatusFilter.addStyleName(STYLE_TABLE_FILTER);
+
+		customerStatusFilter.addValueChangeListener(new ValueChangeListener<CustomerStatusDB>() {
+
+			private static final long serialVersionUID = 8157010827221095855L;
+
+			@Override
+			public void valueChange(ValueChangeEvent<CustomerStatusDB> event) {
+
+				filterTableData();
+			}
+		});
+		return customerStatusFilter;
+	}
+
+	private TextField getTextTableFilter(String placeholder, String filterId) {
+		TextField textTableFilter = new TextField();
+		textTableFilter.addStyleName(STYLE_TABLE_FILTER);
+		textTableFilter.setPlaceholder(placeholder);
+		textTableFilter.setId(filterId);
+
+		textTableFilter.addValueChangeListener(new ValueChangeListener<String>() {
 			private static final long serialVersionUID = -5260840568446184561L;
 
 			@Override
 			public void valueChange(ValueChangeEvent<String> event) {
-				@SuppressWarnings("unchecked")
-				ListDataProvider<CustomerDB> dataProvider = (ListDataProvider<CustomerDB>) customerTable
-						.getDataProvider();
-
-				filterTableData(dataProvider, filterComponents);
+				filterTableData();
 			}
-		};
+		});
+		return textTableFilter;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void filterTableData(ListDataProvider<CustomerDB> dataProvider,
-			ArrayList<AbstractComponent> filterComponents) {
+	private void filterTableData() {
+
+		@SuppressWarnings("unchecked")
+		ListDataProvider<CustomerDB> dataProvider = (ListDataProvider<CustomerDB>) customerTable.getDataProvider();
 
 		for (AbstractComponent component : filterComponents) {
 

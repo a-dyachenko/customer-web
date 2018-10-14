@@ -64,13 +64,11 @@ public class CustomerForm extends VerticalLayout {
 		TextField lastNameField = new TextField(CustomerConstants.LABEL_LAST_NAME);
 		binder.forField(lastNameField).asRequired(CustomerConstants.LABEL_REQUIRED_FIELD).bind(CustomerDB::getLastName,
 				CustomerDB::setLastName);
-
 		form.addComponent(lastNameField);
 
 		TextField phoneNumberField = new TextField(CustomerConstants.LABEL_PHONE_NUMBER);
 		binder.forField(phoneNumberField).asRequired(CustomerConstants.LABEL_REQUIRED_FIELD)
 				.bind(CustomerDB::getCustomerPhone, CustomerDB::setCustomerPhone);
-
 		form.addComponent(phoneNumberField);
 
 		TextField addressField = new TextField(CustomerConstants.LABEL_ADDRESS);
@@ -81,23 +79,31 @@ public class CustomerForm extends VerticalLayout {
 		CustomerDataService customerDataService = CustomerDataService.getCustomerDataService(new CustomerCoreSessionProvider());
 
 		List<CustomerStatusDB> customerStatuses = customerDataService.getCustomerStatuses();
+		
 		ComboBox<CustomerStatusDB> customerStatusesSelect = new ComboBox<CustomerStatusDB>();
-
 		customerStatusesSelect.setCaption(CustomerConstants.CUSTOMER_STATUS);
 		customerStatusesSelect.setItems(customerStatuses);
 		customerStatusesSelect.setItemCaptionGenerator(CustomerStatusDB::getStatusName);
 		customerStatusesSelect.setSelectedItem(customerStatuses.get(0));
-
 		binder.forField(customerStatusesSelect).asRequired(CustomerConstants.LABEL_REQUIRED_FIELD)
 				.bind(CustomerDB::getCustomerStatus, CustomerDB::setCustomerStatus);
-
-		if (this.customer != null)
-			binder.readBean(this.customer);
-
 		form.addComponent(customerStatusesSelect);
+		
+		if (this.customer != null)
+			binder.readBean(this.customer);  
 
 		this.addComponent(form);
 
+		Button saveCustomerButton = buildCustomerButton(form, binder, customerDataService); 
+		this.addComponent(saveCustomerButton);
+
+		if (customer != null) {
+			this.addComponent(new CommentsView(customer));
+		}
+
+	}
+
+	private Button buildCustomerButton(FormLayout form, Binder<CustomerDB> binder, CustomerDataService customerDataService) {
 		Button saveCustomerButton = new Button();
 
 		if (formEditing) {
@@ -138,13 +144,7 @@ public class CustomerForm extends VerticalLayout {
 			}
 			formEditing = !formEditing;
 		});
-
-		this.addComponent(saveCustomerButton);
-
-		if (customer != null) {
-			this.addComponent(new CommentsView(customer));
-		}
-
+		return saveCustomerButton;
 	}
 
 }

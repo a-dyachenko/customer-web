@@ -36,8 +36,7 @@ public class CommentsView extends VerticalLayout {
 	private static final long serialVersionUID = 5282568066585928348L;
 	TextArea commentArea;
 
-
-    private static final Logger logger = LogManager.getLogger(CommentsView.class);
+	private static final Logger logger = LogManager.getLogger(CommentsView.class);
 
 	public CommentsView(CustomerDB customer) {
 		this.addStyleName(STYLE_CUSTOMERS_COMMENT_VIEW);
@@ -55,7 +54,8 @@ public class CommentsView extends VerticalLayout {
 		this.addComponent(commentArea);
 		Button submitButton = new Button(LABEL_SUBMIT_COMMENT);
 
-		CustomerDataService customerDataService = CustomerDataService.getCustomerDataService(new CustomerCoreSessionProvider());
+		CustomerDataService customerDataService = CustomerDataService
+				.getCustomerDataService(new CustomerCoreSessionProvider());
 
 		submitButton.addClickListener(click -> {
 			String commentText = commentArea.getValue();

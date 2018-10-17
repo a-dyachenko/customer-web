@@ -77,9 +77,11 @@ public class CommentsView extends VerticalLayout {
 	}
 
 	private void refreshComments(CustomerDataService customerDataService) {
-
+		if (this.customer == null)
+			return;
+		
 		this.commentsLayout.removeAllComponents();
-		List<CommentDB> customerComments = customerDataService.getCustomerComments(customer);
+		List<CommentDB> customerComments = customerDataService.getCustomerComments(customer.getId());
 
 		if (customerComments != null && !customerComments.isEmpty()) {
 

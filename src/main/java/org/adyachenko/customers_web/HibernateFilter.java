@@ -25,7 +25,6 @@ public class HibernateFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -41,8 +40,10 @@ public class HibernateFilter implements Filter {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("rolling back transaction");
-			session.getTransaction().rollback();
+			if (session.getTransaction() != null) {
+				System.out.println("rolling back transaction");
+				session.getTransaction().rollback();
+			}
 		} finally {
 			session.close();
 		}
